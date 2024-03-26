@@ -34,6 +34,7 @@
 #include "rosbag2_interfaces/srv/pause.hpp"
 #include "rosbag2_interfaces/srv/resume.hpp"
 #include "rosbag2_interfaces/srv/snapshot.hpp"
+#include "rosbag2_interfaces/srv/split_bagfile.hpp"
 
 #include "rosbag2_interfaces/msg/write_split_event.hpp"
 
@@ -169,6 +170,7 @@ private:
   rclcpp::Service<rosbag2_interfaces::srv::Pause>::SharedPtr srv_pause_;
   rclcpp::Service<rosbag2_interfaces::srv::Resume>::SharedPtr srv_resume_;
   rclcpp::Service<rosbag2_interfaces::srv::Snapshot>::SharedPtr srv_snapshot_;
+  rclcpp::Service<rosbag2_interfaces::srv::SplitBagfile>::SharedPtr srv_split_bagfile_;
   std::atomic<bool> paused_ = false;
 
   // Keyboard handler

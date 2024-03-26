@@ -24,6 +24,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/Seek.srv"
   "srv/SetRate.srv"
   "srv/Snapshot.srv"
+  "srv/SplitBagfile.srv"
+  # "srv/Stop.srv"
   "srv/TogglePaused.srv"
   DEPENDENCIES builtin_interfaces
   ADD_LINTER_TESTS
