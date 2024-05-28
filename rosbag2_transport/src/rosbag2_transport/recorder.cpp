@@ -282,7 +282,7 @@ void RecorderImpl::record()
         const std::shared_ptr<rosbag2_interfaces::srv::Snapshot::Response> response)
       {
         response->success = writer_->take_snapshot();
-        RCLCPP_INFO(this->get_logger(), "Snapshot result: %s", response->success ? "success" : "failure");
+        RCLCPP_INFO(node->get_logger(), "Snapshot result: %s", response->success ? "success" : "failure");
       });
   }
 
@@ -328,36 +328,6 @@ void RecorderImpl::record()
 
   split_event_pub_ =
     node->create_publisher<rosbag2_interfaces::msg::WriteSplitEvent>("events/write_split", 1);
-
-  srv_pause_ = create_service<rosbag2_interfaces::srv::Pause>(
-    "~/pause",
-    [this](
-      const std::shared_ptr<rmw_request_id_t>/* request_header */,
-      const std::shared_ptr<rosbag2_interfaces::srv::Pause::Request>/* request */,
-      const std::shared_ptr<rosbag2_interfaces::srv::Pause::Response>/* response */)
-    {
-      pause();
-    });
-
-  srv_resume_ = create_service<rosbag2_interfaces::srv::Resume>(
-    "~/resume",
-    [this](
-      const std::shared_ptr<rmw_request_id_t>/* request_header */,
-      const std::shared_ptr<rosbag2_interfaces::srv::Resume::Request>/* request */,
-      const std::shared_ptr<rosbag2_interfaces::srv::Resume::Response>/* response */)
-    {
-      resume();
-    });
-
-  srv_is_paused_ = create_service<rosbag2_interfaces::srv::IsPaused>(
-    "~/is_paused",
-    [this](
-      const std::shared_ptr<rmw_request_id_t>/* request_header */,
-      const std::shared_ptr<rosbag2_interfaces::srv::IsPaused::Request>/* request */,
-      const std::shared_ptr<rosbag2_interfaces::srv::IsPaused::Response> response)
-    {
-      response->paused = is_paused();
-    });
 
   // Start the thread that will publish events
   event_publisher_thread_ = std::thread(&RecorderImpl::event_publisher_thread_main, this);
@@ -421,8 +391,8 @@ void RecorderImpl::event_publisher_thread_main()
       if (writer_ && record_options_.repeated_transient_local) {
         for (const auto & msg : transient_local_messages_) {
           writer_->write(
-            msg.second, msg.first.first, msg.first.second,
-            this->get_clock()->now());
+            std::move(msg.second), msg.first.first, msg.first.second,
+            node->get_clock()->now());
         }
       }
     }
