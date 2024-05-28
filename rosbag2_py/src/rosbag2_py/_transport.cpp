@@ -585,6 +585,7 @@ PYBIND11_MODULE(_transport, m) {
   .def_readwrite("services", &RecordOptions::services)
   .def_readwrite("all_services", &RecordOptions::all_services)
   .def_readwrite("disable_keyboard_controls", &RecordOptions::disable_keyboard_controls)
+  .def_readwrite("repeated_transient_local", &RecordOptions::repeated_transient_local)
   ;
 
   py::class_<rosbag2_py::Player>(m, "Player")

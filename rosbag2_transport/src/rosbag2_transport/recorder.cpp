@@ -21,6 +21,7 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
+#include <map>
 #include <utility>
 #include <vector>
 
@@ -93,6 +94,7 @@ public:
   rosbag2_storage::StorageOptions storage_options_;
   rosbag2_transport::RecordOptions record_options_;
   std::unordered_map<std::string, std::shared_ptr<rclcpp::SubscriptionBase>> subscriptions_;
+  std::map<std::pair<std::string, std::string>, rclcpp::SerializedMessage> transient_local_messages_;
 
 private:
   void topics_discovery();
@@ -280,6 +282,7 @@ void RecorderImpl::record()
         const std::shared_ptr<rosbag2_interfaces::srv::Snapshot::Response> response)
       {
         response->success = writer_->take_snapshot();
+        RCLCPP_INFO(this->get_logger(), "Snapshot result: %s", response->success ? "success" : "failure");
       });
   }
 
@@ -325,6 +328,36 @@ void RecorderImpl::record()
 
   split_event_pub_ =
     node->create_publisher<rosbag2_interfaces::msg::WriteSplitEvent>("events/write_split", 1);
+
+  srv_pause_ = create_service<rosbag2_interfaces::srv::Pause>(
+    "~/pause",
+    [this](
+      const std::shared_ptr<rmw_request_id_t>/* request_header */,
+      const std::shared_ptr<rosbag2_interfaces::srv::Pause::Request>/* request */,
+      const std::shared_ptr<rosbag2_interfaces::srv::Pause::Response>/* response */)
+    {
+      pause();
+    });
+
+  srv_resume_ = create_service<rosbag2_interfaces::srv::Resume>(
+    "~/resume",
+    [this](
+      const std::shared_ptr<rmw_request_id_t>/* request_header */,
+      const std::shared_ptr<rosbag2_interfaces::srv::Resume::Request>/* request */,
+      const std::shared_ptr<rosbag2_interfaces::srv::Resume::Response>/* response */)
+    {
+      resume();
+    });
+
+  srv_is_paused_ = create_service<rosbag2_interfaces::srv::IsPaused>(
+    "~/is_paused",
+    [this](
+      const std::shared_ptr<rmw_request_id_t>/* request_header */,
+      const std::shared_ptr<rosbag2_interfaces::srv::IsPaused::Request>/* request */,
+      const std::shared_ptr<rosbag2_interfaces::srv::IsPaused::Response> response)
+    {
+      response->paused = is_paused();
+    });
 
   // Start the thread that will publish events
   event_publisher_thread_ = std::thread(&RecorderImpl::event_publisher_thread_main, this);
@@ -384,6 +417,13 @@ void RecorderImpl::event_publisher_thread_main()
         RCLCPP_ERROR_STREAM(
           node->get_logger(),
           "Failed to publish message on '/events/write_split' topic.");
+      }
+      if (writer_ && record_options_.repeated_transient_local) {
+        for (const auto & msg : transient_local_messages_) {
+          writer_->write(
+            msg.second, msg.first.first, msg.first.second,
+            this->get_clock()->now());
+        }
       }
     }
   }
@@ -575,9 +615,14 @@ RecorderImpl::create_subscription(
       topic_name,
       topic_type,
       qos,
-      [this, topic_name, topic_type](std::shared_ptr<const rclcpp::SerializedMessage> message,
+      [this, topic_name, topic_type, qos](std::shared_ptr<const rclcpp::SerializedMessage> message,
       const rclcpp::MessageInfo &) {
         if (!paused_.load()) {
+          if (record_options_.repeated_transient_local &&
+          qos.get_rmw_qos_profile().durability == RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
+          {
+            transient_local_messages_.insert_or_assign({topic_name, topic_type}, *message);
+          }
           writer_->write(
             std::move(message), topic_name, topic_type, node->now().nanoseconds(),
             0);
@@ -591,9 +636,14 @@ RecorderImpl::create_subscription(
       topic_name,
       topic_type,
       qos,
-      [this, topic_name, topic_type](std::shared_ptr<const rclcpp::SerializedMessage> message,
+      [this, topic_name, topic_type, qos](std::shared_ptr<const rclcpp::SerializedMessage> message,
       const rclcpp::MessageInfo & mi) {
         if (!paused_.load()) {
+          if (record_options_.repeated_transient_local &&
+          qos.get_rmw_qos_profile().durability == RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
+          {
+            transient_local_messages_.insert_or_assign({topic_name, topic_type}, *message);
+          }
           writer_->write(
             std::move(message), topic_name, topic_type, node->now().nanoseconds(),
             mi.get_rmw_message_info().source_timestamp);
@@ -604,9 +654,14 @@ RecorderImpl::create_subscription(
       topic_name,
       topic_type,
       qos,
-      [this, topic_name, topic_type](std::shared_ptr<const rclcpp::SerializedMessage> message,
+      [this, topic_name, topic_type, qos](std::shared_ptr<const rclcpp::SerializedMessage> message,
       const rclcpp::MessageInfo & mi) {
         if (!paused_.load()) {
+          if (record_options_.repeated_transient_local &&
+          qos.get_rmw_qos_profile().durability == RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
+          {
+            transient_local_messages_.insert_or_assign({topic_name, topic_type}, *message);
+          }
           writer_->write(
             std::move(message), topic_name, topic_type,
             mi.get_rmw_message_info().received_timestamp,
