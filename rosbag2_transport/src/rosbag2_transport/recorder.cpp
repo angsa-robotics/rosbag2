@@ -94,7 +94,7 @@ public:
   rosbag2_storage::StorageOptions storage_options_;
   rosbag2_transport::RecordOptions record_options_;
   std::unordered_map<std::string, std::shared_ptr<rclcpp::SubscriptionBase>> subscriptions_;
-  std::map<std::pair<std::string, std::string>, rclcpp::SerializedMessage> transient_local_messages_;
+  std::map<std::pair<std::string, std::string>, std::shared_ptr<const rclcpp::SerializedMessage>> transient_local_messages_;
 
 private:
   void topics_discovery();
@@ -591,7 +591,7 @@ RecorderImpl::create_subscription(
           if (record_options_.repeated_transient_local &&
           qos.get_rmw_qos_profile().durability == RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
           {
-            transient_local_messages_.insert_or_assign({topic_name, topic_type}, *message);
+            transient_local_messages_.insert_or_assign({topic_name, topic_type}, message);
           }
           writer_->write(
             std::move(message), topic_name, topic_type, node->now().nanoseconds(),
@@ -612,7 +612,7 @@ RecorderImpl::create_subscription(
           if (record_options_.repeated_transient_local &&
           qos.get_rmw_qos_profile().durability == RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
           {
-            transient_local_messages_.insert_or_assign({topic_name, topic_type}, *message);
+            transient_local_messages_.insert_or_assign({topic_name, topic_type}, message);
           }
           writer_->write(
             std::move(message), topic_name, topic_type, node->now().nanoseconds(),
@@ -630,7 +630,7 @@ RecorderImpl::create_subscription(
           if (record_options_.repeated_transient_local &&
           qos.get_rmw_qos_profile().durability == RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
           {
-            transient_local_messages_.insert_or_assign({topic_name, topic_type}, *message);
+            transient_local_messages_.insert_or_assign({topic_name, topic_type}, message);
           }
           writer_->write(
             std::move(message), topic_name, topic_type,
