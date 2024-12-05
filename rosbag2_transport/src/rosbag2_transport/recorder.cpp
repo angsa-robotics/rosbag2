@@ -240,7 +240,6 @@ void RecorderImpl::stop()
   stop_discovery();
   pause();
   subscriptions_.clear();
-  writer_->close();  // Call writer->close() to finalize current bag file and write metadata
 
   {
     std::lock_guard<std::mutex> lock(event_publisher_thread_mutex_);
@@ -250,6 +249,7 @@ void RecorderImpl::stop()
   if (event_publisher_thread_.joinable()) {
     event_publisher_thread_.join();
   }
+  writer_->close();  // Call writer->close() to finalize current bag file and write metadata
   in_recording_ = false;
   RCLCPP_INFO(node->get_logger(), "Recording stopped");
 }
