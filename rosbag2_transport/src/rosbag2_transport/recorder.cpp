@@ -43,6 +43,7 @@
 
 #include "logging.hpp"
 #include "rosbag2_transport/config_options_from_node_params.hpp"
+#include "rosbag2_transport/reader_writer_factory.hpp"
 #include "rosbag2_transport/topic_filter.hpp"
 
 namespace rosbag2_transport
@@ -781,7 +782,7 @@ Recorder::Recorder(
     keyboard_handler = std::make_shared<KeyboardHandler>();
   }
 
-  auto writer = std::make_unique<rosbag2_cpp::Writer>();
+  auto writer = ReaderWriterFactory::make_writer(record_options);
 
   pimpl_ = std::make_unique<RecorderImpl>(
     this, std::move(writer), keyboard_handler,
