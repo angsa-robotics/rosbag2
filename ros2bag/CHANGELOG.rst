@@ -2,6 +2,23 @@
 Changelog for package ros2bag
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.26.7 (2025-04-22)
+-------------------
+* Fix for failing test_record_qos_profiles on Windows (`#1949 <https://github.com/ros2/rosbag2/issues/1949>`_) (`#1951 <https://github.com/ros2/rosbag2/issues/1951>`_)
+* CLI - update play verb metavar (`#1906 <https://github.com/ros2/rosbag2/issues/1906>`_) (`#1911 <https://github.com/ros2/rosbag2/issues/1911>`_)
+  better show `--clock [Hz]` than `--clock [CLOCK]`
+* Contributors: mergify[bot], Michael Orlov, Patrick Roncagliolo
+
+0.26.6 (2024-12-18)
+-------------------
+* Publish clock after delay is over and disable delay on next loops (`#1861 <https://github.com/ros2/rosbag2/issues/1861>`_) (`#1878 <https://github.com/ros2/rosbag2/issues/1878>`_)
+* [jazzy] Add support for replaying multiple bags (backport `#1848 <https://github.com/ros2/rosbag2/issues/1848>`_) (`#1873 <https://github.com/ros2/rosbag2/issues/1873>`_)
+* [jazzy] Add "--sort" CLI option to the "ros2 bag info" command (backport `#1804 <https://github.com/ros2/rosbag2/issues/1804>`_) (`#1838 <https://github.com/ros2/rosbag2/issues/1838>`_)
+* [jazzy] Add computation of size contribution to info verb (backport `#1726 <https://github.com/ros2/rosbag2/issues/1726>`_) (`#1872 <https://github.com/ros2/rosbag2/issues/1872>`_)
+* Rename rclpy.qos.QoS*Policy to rclpy.qos.*Policy (`#1832 <https://github.com/ros2/rosbag2/issues/1832>`_) (`#1841 <https://github.com/ros2/rosbag2/issues/1841>`_)
+* Contributors: Marco A. Gutierrez, mergify[bot], Nicola Loi, Soenke Prophet, Michael Orlov,
+  Christophe Bedard, Sanoronas
+
 0.26.5 (2024-09-06)
 -------------------
 * Add cli option compression-threads-priority (`#1768 <https://github.com/ros2/rosbag2/issues/1768>`_) (`#1778 <https://github.com/ros2/rosbag2/issues/1778>`_)
@@ -9,6 +26,7 @@ Changelog for package ros2bag
   (cherry picked from commit 25c3e1c2effdaea3b880c39ff7580b2f38a44b1c)
   Co-authored-by: Roman <rsokolkov@gmail.com>
 * Contributors: mergify[bot]
+
 
 0.26.4 (2024-06-27)
 -------------------

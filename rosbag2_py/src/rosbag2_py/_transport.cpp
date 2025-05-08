@@ -47,13 +47,13 @@ public:
     std::for_each(
       arguments_.begin(), arguments_.end(),
       [this](const std::string & arg) {
-        pointers_.push_back(const_cast<char *>(arg.c_str()));
+        pointers_.push_back(arg.c_str());
       }
     );
     pointers_.push_back(nullptr);
   }
 
-  char ** argv()
+  const char ** argv()
   {
     return arguments_.empty() ? nullptr : pointers_.data();
   }
@@ -65,7 +65,7 @@ public:
 
 private:
   std::vector<std::string> arguments_;
-  std::vector<char *> pointers_;
+  std::vector<const char *> pointers_;
 };
 
 rclcpp::QoS qos_from_handle(const py::handle source)
@@ -283,7 +283,7 @@ protected:
       player->play();
 
       auto wait_for_exit_thread = std::thread(
-        [&]() {
+        [this, player]() {
           std::unique_lock<std::mutex> lock(wait_for_exit_mutex_);
           wait_for_exit_cv_.wait(lock, [] {return rosbag2_py::Player::exit_.load();});
           player->stop();
@@ -501,7 +501,7 @@ void bag_rewrite(
     rosbag2_storage::StorageOptions storage_options{};
     YAML::convert<rosbag2_storage::StorageOptions>::decode(bag_node, storage_options);
     rosbag2_transport::RecordOptions record_options = bag_rewrite_default_record_options();
-    record_options = bag_node.as<rosbag2_transport::RecordOptions>();
+    YAML::convert<rosbag2_transport::RecordOptions>::decode(bag_node, record_options);
     output_options.push_back(std::make_pair(storage_options, record_options));
   }
   rosbag2_transport::bag_rewrite(input_options, output_options);

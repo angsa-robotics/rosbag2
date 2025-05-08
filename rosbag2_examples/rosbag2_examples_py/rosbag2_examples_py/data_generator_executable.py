@@ -21,13 +21,13 @@ import rosbag2_py
 def main(args=None):
     writer = rosbag2_py.SequentialWriter()
 
-    storage_options = rosbag2_py._storage.StorageOptions(
+    storage_options = rosbag2_py.StorageOptions(
         uri='big_synthetic_bag',
         storage_id='sqlite3')
-    converter_options = rosbag2_py._storage.ConverterOptions('', '')
+    converter_options = rosbag2_py.ConverterOptions('', '')
     writer.open(storage_options, converter_options)
 
-    topic_info = rosbag2_py._storage.TopicMetadata(
+    topic_info = rosbag2_py.TopicMetadata(
         id=0,
         name='synthetic',
         type='example_interfaces/msg/Int32',
@@ -43,6 +43,8 @@ def main(args=None):
             serialize_message(data),
             time_stamp.nanoseconds)
         time_stamp += Duration(seconds=1)
+    writer.close()
+    print("Generated data saved into the '%s'" % storage_options.uri)
 
 
 if __name__ == '__main__':
