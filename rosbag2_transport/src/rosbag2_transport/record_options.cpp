@@ -38,7 +38,7 @@ Node convert<rosbag2_transport::RecordOptions>::encode(
     compression_mode, compression_format, compression_queue_size, compression_threads,
     compression_threads_priority, topic_qos_profile_overrides,
     include_hidden_topics, include_unpublished_topics, ignore_leaf_topics,
-    start_paused, use_sim_time, disable_keyboard_controls] = record_options;
+    start_paused, use_sim_time, disable_keyboard_controls, repeated_transient_local] = record_options;
   Node node;
   node["all_topics"] = all_topics;
   node["all_services"] = all_services;
@@ -67,6 +67,7 @@ Node convert<rosbag2_transport::RecordOptions>::encode(
   node["start_paused"] = start_paused;
   node["use_sim_time"] = use_sim_time;
   node["disable_keyboard_controls"] = disable_keyboard_controls;
+  node["repeated_transient_local"] = repeated_transient_local;
   return node;
 }
 
@@ -85,7 +86,7 @@ bool convert<rosbag2_transport::RecordOptions>::decode(
     compression_mode, compression_format, compression_queue_size, compression_threads,
     compression_threads_priority, topic_qos_profile_overrides,
     include_hidden_topics, include_unpublished_topics, ignore_leaf_topics,
-    start_paused, use_sim_time, disable_keyboard_controls] = record_options;
+    start_paused, use_sim_time, disable_keyboard_controls, repeated_transient_local] = record_options;
 
   optional_assign<bool>(node, "all_topics", all_topics);
   optional_assign<bool>(node, "all_services", all_services);
@@ -131,6 +132,7 @@ bool convert<rosbag2_transport::RecordOptions>::decode(
   optional_assign<bool>(node, "start_paused", start_paused);
   optional_assign<bool>(node, "use_sim_time", use_sim_time);
   optional_assign<bool>(node, "disable_keyboard_controls", disable_keyboard_controls);
+  optional_assign<bool>(node, "repeated_transient_local", repeated_transient_local);
   return true;
 }
 
