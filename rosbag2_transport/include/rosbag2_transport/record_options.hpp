@@ -78,6 +78,7 @@ public:
   /// \brief Disable keyboard controls if true. This parameter is only used during construction of
   /// the Recorder class to decide whether to initialize KeyboardHandler class or not.
   bool disable_keyboard_controls = false;
+  bool repeated_transient_local = false;
 
   /// Note: Please don't forget to update the YAML serialization and deserialization logic in
   /// `record_options.cpp` and the test case `test_yaml_serialization_deserialization`

@@ -49,6 +49,7 @@ TEST(record_options, test_yaml_serialization_deserialization)
   original.start_paused = true;
   original.use_sim_time = true;
   original.disable_keyboard_controls = true;
+  original.repeated_transient_local = true;
 
   auto node = YAML::convert<rosbag2_transport::RecordOptions>::encode(original);
 
@@ -84,6 +85,7 @@ TEST(record_options, test_yaml_serialization_deserialization)
   CHECK(start_paused);
   CHECK(use_sim_time);
   CHECK(disable_keyboard_controls);
+  CHECK(repeated_transient_local);
 }
 
 TEST(record_options, test_yaml_decode_for_all_and_exclude)

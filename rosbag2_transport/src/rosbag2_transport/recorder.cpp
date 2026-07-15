@@ -20,6 +20,7 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
+#include <map>
 #include <unordered_set>
 #include <utility>
 #include <vector>
@@ -104,6 +105,7 @@ public:
   rosbag2_storage::StorageOptions storage_options_;
   rosbag2_transport::RecordOptions record_options_;
   std::unordered_map<std::string, std::shared_ptr<rclcpp::SubscriptionBase>> subscriptions_;
+  std::map<std::pair<std::string, std::string>, std::shared_ptr<const rclcpp::SerializedMessage>> transient_local_messages_;
   Recorder::OnStartRecordingCallback on_start_recording_callback_{};
 
 private:
@@ -286,7 +288,6 @@ void RecorderImpl::stop()
   pause();
   subscriptions_.clear();
   writer_->close();  // Call writer->close() to finalize current bag file and write metadata
-
   in_recording_ = false;
   RCLCPP_INFO(node->get_logger(), "Recording stopped");
 
@@ -326,6 +327,13 @@ void RecorderImpl::record(const std::string & uri)
   callbacks.write_split_callback =
     [this](rosbag2_cpp::bag_events::BagSplitInfo & info) {
       event_notifier_->on_bag_split_in_recorder(info);
+      if (record_options_.repeated_transient_local) {
+        for (const auto & msg : transient_local_messages_) {
+          writer_->write(
+            msg.second, msg.first.first, msg.first.second,
+            node->get_clock()->now());
+        }
+      }
     };
   writer_->add_event_callbacks(callbacks);
 
@@ -372,13 +380,13 @@ void RecorderImpl::create_control_services()
         } else {
           try {
             response->success = writer_->take_snapshot();
+            RCLCPP_INFO(node->get_logger(), "Snapshot result: %s", response->success ? "success" : "failure");
           } catch (std::exception & e) {
             RCLCPP_ERROR(node->get_logger(), "Error during Snapshot request: %s", e.what());
             response->success = false;
           }
         }
-      }
-    );
+      });
   }
 
   srv_split_bagfile_ = node->create_service<rosbag2_interfaces::srv::SplitBagfile>(
@@ -762,9 +770,14 @@ RecorderImpl::create_subscription(
       topic_name,
       topic_type,
       qos,
-      [this, topic_name, topic_type](std::shared_ptr<const rclcpp::SerializedMessage> message,
+      [this, topic_name, topic_type, qos](std::shared_ptr<const rclcpp::SerializedMessage> message,
       const rclcpp::MessageInfo &) {
         if (!paused_.load()) {
+          if (record_options_.repeated_transient_local &&
+          qos.get_rmw_qos_profile().durability == RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
+          {
+            transient_local_messages_.insert_or_assign({topic_name, topic_type}, message);
+          }
           writer_->write(
             std::move(message), topic_name, topic_type, node->now().nanoseconds(),
             0);
@@ -779,9 +792,14 @@ RecorderImpl::create_subscription(
       topic_name,
       topic_type,
       qos,
-      [this, topic_name, topic_type](std::shared_ptr<const rclcpp::SerializedMessage> message,
+      [this, topic_name, topic_type, qos](std::shared_ptr<const rclcpp::SerializedMessage> message,
       const rclcpp::MessageInfo & mi) {
         if (!paused_.load()) {
+          if (record_options_.repeated_transient_local &&
+          qos.get_rmw_qos_profile().durability == RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
+          {
+            transient_local_messages_.insert_or_assign({topic_name, topic_type}, message);
+          }
           writer_->write(
             std::move(message), topic_name, topic_type, node->now().nanoseconds(),
             mi.get_rmw_message_info().source_timestamp);
@@ -793,9 +811,14 @@ RecorderImpl::create_subscription(
       topic_name,
       topic_type,
       qos,
-      [this, topic_name, topic_type](std::shared_ptr<const rclcpp::SerializedMessage> message,
+      [this, topic_name, topic_type, qos](std::shared_ptr<const rclcpp::SerializedMessage> message,
       const rclcpp::MessageInfo & mi) {
         if (!paused_.load()) {
+          if (record_options_.repeated_transient_local &&
+          qos.get_rmw_qos_profile().durability == RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
+          {
+            transient_local_messages_.insert_or_assign({topic_name, topic_type}, message);
+          }
           writer_->write(
             std::move(message), topic_name, topic_type,
             mi.get_rmw_message_info().received_timestamp,

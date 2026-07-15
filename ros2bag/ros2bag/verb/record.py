@@ -183,6 +183,13 @@ def add_recorder_arguments(parser: ArgumentParser) -> None:
         '--log-level', type=str, default='info',
         choices=['debug', 'info', 'warn', 'error', 'fatal'],
         help='Logging level.')
+    parser.add_argument(
+        '--repeated-transient-local', action='store_true', default=False,
+        help='Repeat transient local messages at the start of each new bag file.'
+    )
+    parser.add_argument(
+        '--topics-config-file', type=FileType('r'),
+        help='Path to a yaml file defining topics to be recorded.')
 
     # Storage configuration
     add_writer_storage_plugin_extensions(parser)
@@ -220,9 +227,9 @@ def add_recorder_arguments(parser: ArgumentParser) -> None:
 
 
 def check_necessary_argument(args):
-    # At least one options out of --all, --all-topics, --all-services, --services, --topics,
+    # At least one options out of --all, --all-topics, --topics-config-file, --all-services, --services, --topics,
     # --topic-types or --regex must be used
-    if not (args.all or args.all_topics or args.all_services or
+    if not (args.all or args.all_topics or args.topics_config_file or args.all_services or 
             (args.services and len(args.services) > 0) or
             (args.topics and len(args.topics) > 0) or
             (args.topic_types and len(args.topic_types) > 0) or args.regex):
@@ -302,7 +309,8 @@ class RecordVerb(VerbExtension):
 
     def main(self, *, args):  # noqa: D102
 
-        uri = args.output or datetime.datetime.now().strftime('rosbag2_%Y_%m_%d-%H_%M_%S')
+        bag_name = datetime.datetime.now().strftime('rosbag2_%Y_%m_%d-%H_%M_%S')
+        uri = f"{args.output}/{bag_name}" if args.output else bag_name
 
         error_str = validate_parsed_arguments(args, uri)
         if error_str and len(error_str) > 0:
@@ -317,6 +325,17 @@ class RecordVerb(VerbExtension):
                 qos_profile_overrides = convert_yaml_to_qos_profile(qos_profile_dict)
             except (InvalidQoSProfileException, ValueError) as e:
                 return print_error(str(e))
+
+        if args.topics_config_file:
+            topics_yaml = yaml.safe_load(args.topics_config_file)
+            try:
+                args.topics = topics_yaml["topics"]
+            except (KeyError) as e:
+                return print_error("No key 'topics' in topics config file")
+            except Exception as e:
+                return print_error(str(e))
+            if type(args.topics) != list:
+                return print_error("Topics config file must contain a list of topics")
 
         # Prepare custom_data dictionary
         custom_data = {}
@@ -369,6 +388,7 @@ class RecordVerb(VerbExtension):
         record_options.ignore_leaf_topics = args.ignore_leaf_topics
         record_options.use_sim_time = args.use_sim_time
         record_options.disable_keyboard_controls = args.disable_keyboard_controls
+        record_options.repeated_transient_local = args.repeated_transient_local
 
         recorder = Recorder(storage_options, record_options, args.log_level, args.node_name)
 
