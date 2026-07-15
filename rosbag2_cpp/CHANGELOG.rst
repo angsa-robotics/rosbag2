@@ -2,6 +2,36 @@
 Changelog for package rosbag2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.26.11 (2026-06-03)
+--------------------
+
+0.26.10 (2026-04-07)
+--------------------
+* Fix for a possible race condition in compression writer on close
+  (`#2362 <https://github.com/ros2/rosbag2/issues/2362>`_)
+  (`#2381 <https://github.com/ros2/rosbag2/issues/2381>`_)
+* [jazzy] Add accidentally deleted `typesupport_helper.{cpp}hpp` files
+  (`#2320 <https://github.com/ros2/rosbag2/issues/2320>`_)
+  * Added back, accidentally deleted `typesupport_helper.{cpp}hpp` files
+* Contributors: Michael Orlov <morlovmr@gmail.com>, mergify[bot]
+
+0.26.9 (2025-08-11)
+-------------------
+* [jazzy] Fix reindex duration bug when bag file durations overlap (backport `#2036 <https://github.com/ros2/rosbag2/issues/2036>`_) (`#2107 <https://github.com/ros2/rosbag2/issues/2107>`_)
+  Co-authored-by: Chui Vanfleet <26607858+ChuiVanfleet@users.noreply.github.com>
+  Co-authored-by: Michael Orlov <morlovmr@gmail.com>
+* Contributors: mergify[bot]
+
+0.26.8 (2025-07-10)
+-------------------
+* [jazzy] Add support for searching message definitions in nested subdirectories (backport `#2055 <https://github.com/ros2/rosbag2/issues/2055>`_) (`#2064 <https://github.com/ros2/rosbag2/issues/2064>`_)
+* [jazzy] Fix for issue when inner message definition not found for service events (`#2042 <https://github.com/ros2/rosbag2/issues/2042>`_)
+* [jazzy] Improvements in message publishing timings (backport `#2025 <https://github.com/ros2/rosbag2/issues/2025>`_) (`#2027 <https://github.com/ros2/rosbag2/issues/2027>`_)
+* [jazzy] Upstream quality changes from Apex.AI part-2 (backport `#1924 <https://github.com/ros2/rosbag2/issues/1924>`_) (`#1987 <https://github.com/ros2/rosbag2/issues/1987>`_)
+* Address clang warning in the `TimeControllerClock::wakeup()` (`#1962 <https://github.com/ros2/rosbag2/issues/1962>`_) (`#1977 <https://github.com/ros2/rosbag2/issues/1977>`_)
+* Contributors: Michael Orlov <morlovmr@gmail.com>, Barry Xu,
+  Alejandro Hernández Cordero<ahcorde@gmail.com>, Christophe Bedard <bedard.christophe@gmail.com>
+
 0.26.7 (2025-04-22)
 -------------------
 

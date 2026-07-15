@@ -2,6 +2,45 @@
 Changelog for package rosbag2_transport
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.26.11 (2026-06-03)
+--------------------
+* [kilted] Address flakiness in the "rosbag2_transport::test_record_services" tests (backport `#2368 <https://github.com/ros2/rosbag2/issues/2368>`_) (`#2379 <https://github.com/ros2/rosbag2/issues/2379>`_) (`#2400 <https://github.com/ros2/rosbag2/issues/2400>`_)
+  Co-authored-by: mergify[bot] <37929162+mergify[bot]@users.noreply.github.com>
+  Co-authored-by: Michael Orlov <morlovmr@gmail.com>
+* [kilted] Fix QoS overrides ignored when topic name has no leading slash (backport `#2394 <https://github.com/ros2/rosbag2/issues/2394>`_) (`#2405 <https://github.com/ros2/rosbag2/issues/2405>`_) (`#2413 <https://github.com/ros2/rosbag2/issues/2413>`_)
+  Co-authored-by: Sahil Lakhmani <126493645+lakhmanisahil@users.noreply.github.com>
+  Co-authored-by: Michael Orlov <morlovmr@gmail.com>
+* Contributors: mergify[bot]
+
+0.26.10 (2026-04-07)
+--------------------
+* [jazzy] Add on start recording callback for Recorder
+  (backport `#2340 <https://github.com/ros2/rosbag2/issues/2340>`_)
+* [jazzy] Address race condition in the "wait_for_playback_to_start()"
+  (backport `#2344 <https://github.com/ros2/rosbag2/issues/2344>`_)
+  (`#2359 <https://github.com/ros2/rosbag2/issues/2359>`_)
+* Address a possible deadlock in seek(timestamp) (`#2345 <https://github.com/ros2/rosbag2/issues/2345>`_) (`#2348 <https://github.com/ros2/rosbag2/issues/2348>`_)
+* [jazzy] Add missing "RecordOptions" fields to the encode/decode functions (backport `#2334 <https://github.com/ros2/rosbag2/issues/2334>`_) (`#2338 <https://github.com/ros2/rosbag2/issues/2338>`_)
+* Contributors: Michael Orlov <morlovmr@gmail.com>, mergify[bot]
+
+0.26.9 (2025-08-11)
+-------------------
+* [jazzy] Add public API to get player's starting time and playback duration (backport `#2095 <https://github.com/ros2/rosbag2/issues/2095>`_) (`#2102 <https://github.com/ros2/rosbag2/issues/2102>`_)
+  Co-authored-by: Michael Orlov <morlovmr@gmail.com>
+* Contributors: mergify[bot]
+
+0.26.8 (2025-07-10)
+-------------------
+* [jazzy] Bugfix for deadlocks in Rosbag2 player when calling stop API (backport `#2057 <https://github.com/ros2/rosbag2/issues/2057>`_) (`#2060 <https://github.com/ros2/rosbag2/issues/2060>`_)
+* Skip flaky `can_record_again_after_stop` test (`#2031 <https://github.com/ros2/rosbag2/issues/2031>`_) (`#2033 <https://github.com/ros2/rosbag2/issues/2033>`_)
+* [jazzy] Address flakiness in tests where need to spin a node (backport `#2001 <https://github.com/ros2/rosbag2/issues/2001>`_) (`#2019 <https://github.com/ros2/rosbag2/issues/2019>`_)
+* [jazzy] Improvements in message publishing timings (backport `#2025 <https://github.com/ros2/rosbag2/issues/2025>`_) (`#2027 <https://github.com/ros2/rosbag2/issues/2027>`_)
+* [jazzy] Upstream quality changes from Apex.AI part-2 (backport `#1924 <https://github.com/ros2/rosbag2/issues/1924>`_) (`#1987 <https://github.com/ros2/rosbag2/issues/1987>`_)
+* Bugfix: `ros2 bag convert` dropping messages with compression mode message (`#1975 <https://github.com/ros2/rosbag2/issues/1975>`_) (`#1985 <https://github.com/ros2/rosbag2/issues/1985>`_)
+* [jazzy] Use DDS queue depth for subscriptions as a maximum value across publishers (backport `#1960 <https://github.com/ros2/rosbag2/issues/1960>`_) (`#1980 <https://github.com/ros2/rosbag2/issues/1980>`_)
+* Contributors: Michael Orlov <morlovmr@gmail.com>, Ben <benjamin.andrew@swri.org>,
+  Christophe Bedard <bedard.christophe@gmail.com>
+
 0.26.7 (2025-04-22)
 -------------------
 * Initialize filter with namespaced updated topics and services.  (rolling) (`#1944 <https://github.com/ros2/rosbag2/issues/1944>`_) (`#1948 <https://github.com/ros2/rosbag2/issues/1948>`_)

@@ -2,6 +2,21 @@
 Changelog for package mcap_vendor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.26.11 (2026-06-03)
+--------------------
+
+0.26.10 (2026-04-07)
+--------------------
+
+0.26.9 (2025-08-11)
+-------------------
+
+0.26.8 (2025-07-10)
+-------------------
+* mcap_vendor: update to v1.3.1 (`#2069 <https://github.com/ros2/rosbag2/issues/2069>`_)
+* Backporting Missing cstdint Include (`#2008 <https://github.com/ros2/rosbag2/issues/2008>`_) (`#2015 <https://github.com/ros2/rosbag2/issues/2015>`_)
+* Contributors: james-rms, David Anthony <djanthony@gmail.com>, Barry Xu <barry.xu@sony.com>
+
 0.26.7 (2025-04-22)
 -------------------
 

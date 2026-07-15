@@ -2,6 +2,28 @@
 Changelog for package rosbag2_compression
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.26.11 (2026-06-03)
+--------------------
+* Add validation for empty file path in compression process (`#2398 <https://github.com/ros2/rosbag2/issues/2398>`_) (`#2411 <https://github.com/ros2/rosbag2/issues/2411>`_)
+  (cherry picked from commit b7370e4061b398c943a3fa7bc71e6210f0d6474b)
+  Co-authored-by: Michael Orlov <morlovmr@gmail.com>
+* Contributors: mergify[bot]
+
+0.26.10 (2026-04-07)
+--------------------
+* Fix for a possible race condition in compression writer on close
+  (`#2362 <https://github.com/ros2/rosbag2/issues/2362>`_)
+  (`#2381 <https://github.com/ros2/rosbag2/issues/2381>`_)
+* Contributors: Michael Orlov <morlovmr@gmail.com>, mergify[bot]
+
+0.26.9 (2025-08-11)
+-------------------
+
+0.26.8 (2025-07-10)
+-------------------
+* Bugfix: `ros2 bag convert` dropping messages with compression mode message (`#1975 <https://github.com/ros2/rosbag2/issues/1975>`_) (`#1985 <https://github.com/ros2/rosbag2/issues/1985>`_)
+* Contributors: Ben <benjamin.andrew@swri.org>, Michael Orlov <morlovmr@gmail.com>
+
 0.26.7 (2025-04-22)
 -------------------
 
